@@ -4,11 +4,11 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 500;
 
-let spriteCount = 0; //Variável para fazer gif do Player/Balloons.
 let score = 0; //Variável de pontuação.
-let gameFrame = 0; //Variável de atualização dos Frames.
+let gameFrame = 0; //Variável p/ atualizar Frames, como spritesheet
 let gameSpeed = 1; //Variável para o background mexer.
 ctx.font = "40px Georgia";
+let gameOver = false; //Começa como falso, pois ainda não teve GameOver.
 
 //Mouse Interactivity:
 let canvasPosition = canvas.getBoundingClientRect(); //Para linkar com a borda do canvas, e não com a borda da janela, e pegar o verdadeiro valor de x e y dentro do canvas.
@@ -27,7 +27,6 @@ canvas.addEventListener("mousedown", (event) => {
 canvas.addEventListener("mouseup", (event) => {
   mouse.click = false; //Volta a tornar falso, quando o click para.
 });
-
 
 //Player:
 const playerLeft = new Image();
@@ -64,6 +63,7 @@ class Player {
     }
   }
   draw() {
+    //CÓDIGO DA LINHA QUE LIGA A ABELHA AO MOUSE
     if (mouse.click) {
       //Se o mouse clique for verdadeiro.
       ctx.lineWidth = 0.2; //Espessura da linha.
@@ -73,13 +73,15 @@ class Player {
       ctx.stroke(); //Conecta os dois pontos da linha.
       ctx.closePath();
     }
-    ctx.fillStyle = "orange";
-    ctx.beginPath();
-    //o arc vai desenhar o círculo
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); //ângulo de start = 0 e o ângulo vai ser PI*2 para um círculo completo.
-    ctx.fill(); //Preencher o círculo.
-    ctx.closePath();
-    ctx.fillRect(this.x, this.y, this.radius, 10);
+    //COMENTANDO A BOLA PARÂMETRO DA ABELHA
+    // ctx.fillStyle = "orange";
+    // ctx.beginPath();
+    // //o arc vai desenhar o círculo
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); //ângulo de start = 0 e o ângulo vai ser PI*2 para um círculo completo.
+    // ctx.fill(); //Preencher o círculo.
+    // ctx.closePath();
+    // ctx.fillRect(this.x, this.y, this.radius, 10);
+    //FIM DA BOLA PARÂMETRO DA ABELHA.
 
     ctx.save(); //salva as configurações do canvas atual
     ctx.translate(this.x, this.y); //Passo o X e o Y do Player p/ mover a rotação do ponto central, onde o player atualmente está, e então eu posso trocar na linha 83 e na linha 85 o this.x e o this.y por ZERO, pois a posição do player agora está refletida nesse translate.
@@ -117,9 +119,10 @@ class Player {
 const player = new Player(); //CONVOCA o Player. (mas precisa do loop ainda, pra rodar.)
 //FIM DO PLAYER
 
-
 //Balloons
 const balloonArr = []; //Começa com um array vazio.
+const balloonImg = new Image(); //Variável do desenho do balão
+balloonImg.src = "assets/balloonImg01.png"; //fonte
 class Balloon {
   constructor() {
     this.x = Math.random() * canvas.width; //número random entre 0 e o width do canvas.
@@ -138,19 +141,31 @@ class Balloon {
     this.distance = Math.sqrt(dx * dx + dy * dy); //CÁLCULO DA COLISÃO: quando uma balão trisca no raio do player, sqrt significa raiz quadrada do número.
   }
   draw() {
-    ctx.fillStyle = "blue";
-    ctx.beginPath(); //Precisa sempre abrir o caminho.
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); //Para desenhar o círculo. O ângulo de start = 0 e o ângulo vai ser PI*2 para um círculo completo.
-    ctx.fill(); //Preenche o círculo da cor blue.
-    ctx.closePath(); //Fecha o caminho.
-    ctx.stroke();
+    //COMENTANDO A BOLA AZUL DE PARÂMETRO
+    // ctx.fillStyle = "blue";
+    // ctx.beginPath(); //Precisa sempre abrir o caminho.
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); //Para desenhar o círculo. O ângulo de start = 0 e o ângulo vai ser PI*2 para um círculo completo.
+    // ctx.fill(); //Preenche o círculo da cor blue.
+    // ctx.closePath(); //Fecha o caminho.
+    // ctx.stroke();
+    //FIM DO COMENTÁRIO DA BOLA AZUL DE PARÂMETRO
+
+    ctx.drawImage(
+      balloonImg,
+      this.x - 65,
+      this.y - 57,
+      this.radius * 3.25,
+      this.radius * 3.25
+    ); //desenho o balão (img, x, y, w, h)
   }
 }
 
 const balloonPop1 = document.createElement("audio"); //Declara som.
 balloonPop1.src = "assets/balloon1.mp3"; //endereço do som.
+balloonPop1.volume = 0.2;
 const balloonPop2 = document.createElement("audio"); //Declara som.
 balloonPop2.src = "assets/balloon2.mp3";
+balloonPop2.volume = 0.2;
 
 function handleBalloons() {
   if (gameFrame % 50 == 0) {
@@ -186,45 +201,158 @@ function handleBalloons() {
 }
 //FIM DOS BALLOONS
 
-
 //BACKGROUND
 const background = new Image(); //cria o backgound
-background.src = 'assets/background1.jpg'; //mostra a source.
+background.src = "assets/background1.jpg"; //mostra a source.
 
 const bg = {
-    x1: 0, //preciso de um x para o bg 1.
-    x2: canvas.width, //e um X para a cópia do bg.
-    y: 0, //Só queremos mexer o X.
-    width: canvas.width,
-    height: canvas.height
-}
+  x1: 0, //preciso de um x para o bg 1.
+  x2: canvas.width, //e um X para a cópia do bg.
+  y: 0, //Só queremos mexer o X.
+  width: canvas.width,
+  height: canvas.height,
+};
 
-function handleBackground() { //cria a função de chamamento.
-    // bg.x1--; --> Também funciona, mas não muda a velocidade.
-    bg.x1 -= gameSpeed; //faz o background deslocar p/ a esquerda no X.
-    if (bg.x1 < -bg.width) bg.x1 = bg.width; //condicional de loop.
-    // bg.x2--; usaremos o gameSpeed para poder modificá-lo e poder alterar a velocidade do BG, ou mesmo deixá-lo estático, com 0;
-    bg.x2 -= gameSpeed; //BG CÓPIA
-    if (bg.x2 < -bg.width) bg.x2 = bg.width; //bg CÓPIA.
-    ctx.drawImage(background, bg.x1, bg.y, bg.width, bg.height);
-    ctx.drawImage(background, bg.x2, bg.y, bg.width, bg.height);
+function handleBackground() {
+  //cria a função de chamamento.
+  // bg.x1--; --> Também funciona, mas não muda a velocidade.
+  bg.x1 -= gameSpeed; //faz o background deslocar p/ a esquerda no X.
+  if (bg.x1 < -bg.width) bg.x1 = bg.width - 10; //condicional de loop.
+  // bg.x2--; usaremos o gameSpeed para poder modificá-lo e poder alterar a velocidade do BG, ou mesmo deixá-lo estático, com 0;
+  bg.x2 -= gameSpeed; //BG CÓPIA
+  if (bg.x2 < -bg.width) bg.x2 = bg.width - 10; //bg CÓPIA.
+  ctx.drawImage(background, bg.x1, bg.y, bg.width, bg.height);
+  ctx.drawImage(background, bg.x2, bg.y, bg.width, bg.height);
 }
 //FIM DO BACKGROUND
 
+//ENEMIES
+const enemyImg = new Image();
+enemyImg.src = "assets/enemy1.png";
+
+class Enemy {
+  constructor() {
+    this.x = canvas.width + 200; //margem para não brotar direto.
+    this.y = Math.random() * (canvas.height - 150) + 90; //margem.
+    this.radius = 25; //tamanho da bola de neve.
+    this.speed = Math.random() * 4 + 4; //Velocidade random entre 4 e 8.
+    //SPRITESHEET:
+    this.frame = 0; //Varia de acordo com o tanto de imgns individuais que tem cada img, nesse caso de 0 a 6.
+    this.frameX = 0; //COLUNAS DO SPRITESHEET, aqui temos: 0, 1 e 2 (3);
+    this.frameY = 0; //LINHAS DO SPRITESHEET, aqui temos: 0 e 1 (2);
+    this.spriteWidth = 512; //(1536 / 3). width dividido por colunas.
+    this.spriteHeight = 385.5; //(771 / 2).
+    //FIM SPRITESHEET VARIÁVEIS
+  }
+  draw() {
+    //CÓDIGO DA BOLA PARÂMETRO COMENTADO
+    // ctx.fillStyle = 'white';
+    // ctx.beginPath();
+    // //o arc vai desenhar o círculo
+    // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); //ângulo de start = 0 e o ângulo vai ser PI*2 para um círculo completo.
+    // ctx.fill(); //preenche o círculo da cor branca.
+    //FIM DO CÓDIGO DO ENEMY PARÂMETRO
+
+    //DESENHANDO COM SPRITESHET: Preciso usar a versão de parâmetros mais longa, com 9 elementos.
+    //Parâmetros: (Img, sourceX = (frameX*spriteWidth), sY = (frameY * spriteH.), sWidth = (cálculo do spriteWidth), sH = (cálculo SH), thisX - Number (para encaixar na esfera), thisY - N., W = spriteWidth / Number(se quiser enemy menor), H = spriteHeight / N.).
+    ctx.drawImage(
+      enemyImg,
+      this.frameX * this.spriteWidth,
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.x - 31,
+      this.y - 50,
+      this.spriteWidth / 4,
+      this.spriteHeight / 4
+    );
+  }
+  update() {
+    this.x -= this.speed; //A bola corre da direita para a esquerda.
+    if (this.x < 0 - this.radius * 2) {
+      //Se ela chegar no Width 0, vai voltar com tudo random de novo, para ficar imprevisível.
+      this.x = canvas.width + 200;
+      this.y = Math.random() * (canvas.height - 150) + 90;
+      this.speed = Math.random() * 4 + 4; //VELOCIDADE DE NOVO.
+    }
+    //frameX DO SPRITESHEET:
+    if (gameFrame % 4 == 0) {
+      //VELOCIDADE: A cada 4 frames:
+      this.frame++; //dou increase no frame.
+      if (this.frame >= 6) this.frame = 0; //6 = tanto de bolas.
+      if (this.frame == 2 || this.frame == 5 /*|| this.frame == 8*/) {
+        this.frameX = 0; //para reiniciar o ciclo.
+      } else {
+        this.frameX++;
+      }
+      //frameY DO SPRITESHEET:
+      if (this.frame < 2) this.frameY = 0;
+      //2 pois tem três colunas, e 0 porque está na primeira linha.
+      else if (this.frame < 5) this.frameY = 1;
+      //5 pois soma com mais 3 colunas, e 1 porque está na segunda linhas.
+      //else if (this.frame < 8) this.frameY = 2; ==> E assim vai.
+      else this.frameY = 0;
+      //FIM FRAMES SPRITESHEET
+    }
+    //Collision with Player:
+    const dx = this.x - player.x; //distanciaX = bolax - playerx
+    const dy = this.y - player.y;
+    const distance = Math.sqrt(dx * dx + dy * dy); //Fórmula da distância X e Y.
+    if (distance < this.radius + player.radius) {
+      handleGameOver(); //Chama a função do GameOver.
+    }
+  }
+}
+const enemy1 = new Enemy(); //criamos UM inimigo.
+function handleEnemies() {
+  enemy1.draw();
+  enemy1.update();
+}
+// const enemy2 = new Enemy(); //criamos UM inimigo.
+// function handleEnemies() {
+//   enemy2.update();
+//   enemy2.draw();
+// }
+//FIM DOS ENEMIES
+
+//GAME OVER & SCORE
+function handleGameOver() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "yellow";
+  ctx.font = "60px Verdana";
+  ctx.fillText("Game Over!", canvas.width / 5, 250);
+
+  ctx.font = "30px Verdana";
+  ctx.fillStyle = "white";
+  ctx.fillText(`Your Final Score: ` + score, canvas.width / 4.1, 300);
+
+  gameOver = true; //Torna o GAMEOVER true, pra parar o jogo.
+}
+
+function score1() {
+  ctx.font = "30px Verdana";
+  ctx.fillStyle = "white"; //cor do score.
+  ctx.fillText("Score: " + score, 15, 40); //P/ aparecer score, e a posição que eu quero.
+}
+//FIM DO GAMEOVER E SCORE
 
 //Animation Loop - CONVOCO TUDO AQUI!
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); //Limpa o canvas no loop (x, y, w, h).
   handleBackground(); //Convoca o background no loop.
   handleBalloons(); // Para criar as balões no loop.
+  score1();
   player.update(); //Fazer update da posição do Player.
   player.draw(); //Desenha o Player e a linha entre o mouse e o player.
-  ctx.fillStyle = "white"; //cor do score.
-  ctx.fillText("Score: " + score, 15, 40); //P/ aparecer score, e a posição que eu quero.
+  handleEnemies(); //TEM QUE SER depois do Player.
   gameFrame++; //Vai adicionando o gameFrame em 1, a cada animação de Frame. E usaremos para eventos periódicos.
   //console.log(gameFrame)
-  requestAnimationFrame(animate); //cria o LOOP do animate.
+  if (!gameOver) requestAnimationFrame(animate); //cria o LOOP do animate, caso não tenha sido GameOver, senão para tudo.
 }
+
 animate(); //Precisa ser convocada para rodar o código.
 //FIM DO ANIMATION LOOP
 
