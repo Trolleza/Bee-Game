@@ -1,0 +1,80 @@
+@font-face {
+  font-family: 'Honeybeeregular';
+  src: url(./assets/fonts/Honeybeeregular.ttf);}
+@font-face {
+  font-family: 'Honeycombreg';
+  src: url(./assets/fonts/Honeycombreg.ttf);}
+@font-face {
+  font-family: 'Summerbee';
+  src: url(./assets/fonts/Summerbee.ttf);}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  background-image: url(assets/bgcss.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.canvas1 {
+  width: 800px;
+  height: 500px;
+  border: 4px solid black;
+}
+
+.title h1{
+  font-family: 'Honeybeeregular';
+  color: yellow;
+  display: inline-block;
+  font-size: 60px;
+  text-shadow: 5px 5px 10px goldenrod;
+}
+
+.startButton {
+  font-family: 'Honeybeeregular';
+  font-weight: 1000;
+  font-size: 30px;
+  background-color: yellow;
+  color: black;
+  padding: 0.5em 1.5em;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  border: 4px solid transparent;
+  border-image: linear-gradient(45deg, #c4ab20, #926709, #f0a543, #f38c16);
+  border-image-slice: 1;
+  box-shadow: 0 15px 25px rgba(0,0,0,.2);
+}
+
+.startButton:hover {
+  background-color: whitesmoke;
+}
+
+.startButton:active {
+  color: whitesmoke;
+  box-shadow: none;
+  background-color: black;
+  top: 5px;
+}
+
+a:link, a:visited {
+  color: gold;
+  font-size: 17px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  text-shadow: 2px 2px 2px rgb(255, 255, 255);
+}
+
+
