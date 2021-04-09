@@ -9,7 +9,7 @@ A game made through **CANVAS**, integrated with HTML, CSS and Javascript, for ac
 
 ## Apresentation Link:
 
-[About the Project!](https://www.canva.com/design/DAEbHEgqLZk/K2HcDc8Le1jvPcAcf7qsjA/view?utm_content=DAEbHEgqLZk&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink#2)
+[About the Project!](https://www.canva.com/design/DAEbHEgqLZk/K2HcDc8Le1jvPcAcf7qsjA/view?utm_content=DAEbHEgqLZk&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
 
 ## Instructions:
 
